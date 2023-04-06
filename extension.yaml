@@ -1,0 +1,7 @@
+﻿Id: F95ZoneMetadataProvider_ab820846-6ffe-4883-ba22-e99af02a803f
+Name: F95Zone Metadata Provider
+Author: brxn
+Version: 1.0
+Module: F95ZoneMetadataProvider.dll
+Type: MetadataProvider
+Icon: icon.png
