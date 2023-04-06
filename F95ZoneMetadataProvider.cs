@@ -44,7 +44,8 @@ namespace F95ZoneMetadataProvider
             _playniteAPI = api;
             playniteAPI = api;
             _settings = new Settings(this, _playniteAPI);
-            F95ZoneMetadataProvider.settings = _settings;
+            settings = _settings;
+
             Properties = new MetadataPluginProperties
             {
                 HasSettings = true

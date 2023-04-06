@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace F95ZoneMetadataProvider
 {
@@ -188,7 +187,7 @@ namespace F95ZoneMetadataProvider
 
         public override string GetDescription(GetMetadataFieldArgs args)
         {
-            return GetResult(args)?.Description ?? base.GetD(args);
+            return GetResult(args)?.Description ?? base.GetName(args);
         }
 
         public override IEnumerable<MetadataProperty> GetDevelopers(GetMetadataFieldArgs args)

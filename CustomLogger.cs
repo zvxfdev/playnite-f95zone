@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Playnite.SDK;
+﻿using Playnite.SDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using Playnite.SDK;
 using PlayniteLogger = Playnite.SDK.ILogger;
 
 namespace F95ZoneMetadataProvider
-{
+{/*
 
     public static class CustomLogger
     {
@@ -70,6 +69,6 @@ namespace F95ZoneMetadataProvider
         {
             throw new NotImplementedException();
         }
-    }
+    }*/
 
 }

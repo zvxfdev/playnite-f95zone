@@ -9,6 +9,8 @@ using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Playnite.SDK;
+using System;
+
 namespace F95ZoneMetadataProvider
 {
     public class Scrapper
@@ -271,8 +273,9 @@ namespace F95ZoneMetadataProvider
             if (title.Equals(string.Empty)) return default;
 
             // "Corrupted Kingdoms [v0.12.8] [ArcGames]"
-
+            
             var span = title.AsSpan().Trim();
+
             var bracketStartIndex = span.IndexOf('[');
             var bracketEndIndex = span.IndexOf(']');
 
