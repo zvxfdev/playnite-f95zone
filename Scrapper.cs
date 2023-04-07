@@ -4,12 +4,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Playnite.SDK;
-using System;
 
 namespace F95ZoneMetadataProvider
 {

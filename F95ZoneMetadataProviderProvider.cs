@@ -83,7 +83,7 @@ namespace F95ZoneMetadataProvider
                 clientHandler.CookieContainer = cookieContainer;
             }
 
-            var scrapper = new Scrapper(F95ZoneMetadataProvider.logger/*CustomLogger.GetLogger<Scrapper>(nameof(Scrapper))*/, clientHandler);
+            var scrapper = new Scrapper(F95ZoneMetadataProvider.Logger/*CustomLogger.GetLogger<Scrapper>(nameof(Scrapper))*/, clientHandler);
             return scrapper;
         }
 
@@ -91,14 +91,14 @@ namespace F95ZoneMetadataProvider
         {
             if (_didRun) return _result;
 
-            var scrapper = SetupScrapper(F95ZoneMetadataProvider.settings);
+            var scrapper = SetupScrapper(F95ZoneMetadataProvider.Settings);
 
             var id = GetIdFromGame(Game);
             if (id is null)
             {
                 if (string.IsNullOrWhiteSpace(Game.Name))
                 {
-                    F95ZoneMetadataProvider.logger.Error("Unable to get Id from Game and Name is null or whitespace!");
+                    F95ZoneMetadataProvider.Logger.Error("Unable to get Id from Game and Name is null or whitespace!");
                     _didRun = true;
                     return null;
                 }
@@ -113,7 +113,7 @@ namespace F95ZoneMetadataProvider
                     var searchResult = searchTask.Result;
                     if (searchResult is null || !searchResult.Any())
                     {
-                        F95ZoneMetadataProvider.logger.Error($"Search return nothing for {Game.Name}, make sure you are logged in!");
+                        F95ZoneMetadataProvider.Logger.Error($"Search return nothing for {Game.Name}, make sure you are logged in!");
                         _didRun = true;
                         return null;
                     }
@@ -126,7 +126,7 @@ namespace F95ZoneMetadataProvider
                 }
                 else
                 {
-                    var item = F95ZoneMetadataProvider.playniteAPI.Dialogs.ChooseItemWithSearch(
+                    var item = F95ZoneMetadataProvider.Api.Dialogs.ChooseItemWithSearch(
                         new List<GenericItemOption>(),
                         searchString =>
                         {
@@ -136,7 +136,7 @@ namespace F95ZoneMetadataProvider
                             var searchResult = searchTask.Result;
                             if (searchResult is null || !searchResult.Any())
                             {
-                                F95ZoneMetadataProvider.logger.Error("Search return nothing, make sure you are logged in!");
+                                F95ZoneMetadataProvider.Logger.Error("Search return nothing, make sure you are logged in!");
                                 _didRun = true;
                                 return null;
                             }
@@ -195,7 +195,7 @@ namespace F95ZoneMetadataProvider
             var dev = GetResult(args)?.Developer;
             if (dev is null) return base.GetDevelopers(args);
 
-            var company = F95ZoneMetadataProvider.playniteAPI.Database.Companies.Where(x => x.Name is not null).FirstOrDefault(x => x.Name.Equals(dev, StringComparison.OrdinalIgnoreCase));
+            var company = F95ZoneMetadataProvider.Api.Database.Companies.Where(x => x.Name is not null).FirstOrDefault(x => x.Name.Equals(dev, StringComparison.OrdinalIgnoreCase));
             if (company is not null) return new[] { new MetadataIdProperty(company.Id) };
             return new[] { new MetadataNameProperty(dev) };
         }
@@ -210,15 +210,15 @@ namespace F95ZoneMetadataProvider
         {
             // Tags
             var tagProperties = PlaynitePropertyHelper.ConvertValuesIfPossible(
-                F95ZoneMetadataProvider.playniteAPI,
-                F95ZoneMetadataProvider.settings.TagProperty,
+                F95ZoneMetadataProvider.Api,
+                F95ZoneMetadataProvider.Settings.TagProperty,
                 currentProperty,
                 () => GetResult(args)?.Tags);
 
             // Labels
             var labelProperties = PlaynitePropertyHelper.ConvertValuesIfPossible(
-                F95ZoneMetadataProvider.playniteAPI,
-                 F95ZoneMetadataProvider.settings.LabelProperty,
+                F95ZoneMetadataProvider.Api,
+                 F95ZoneMetadataProvider.Settings.LabelProperty,
                 currentProperty,
                 () => GetResult(args)?.Labels);
 
@@ -261,7 +261,7 @@ namespace F95ZoneMetadataProvider
                 return new MetadataFile(images.First());
             }
 
-            var imageFileOption = F95ZoneMetadataProvider.playniteAPI.Dialogs.ChooseImageFile(images.Select(image => new ImageFileOption(image)).ToList(), caption);
+            var imageFileOption = F95ZoneMetadataProvider.Api.Dialogs.ChooseImageFile(images.Select(image => new ImageFileOption(image)).ToList(), caption);
             return imageFileOption == null ? null : new MetadataFile(imageFileOption.Path);
         }
 
@@ -277,7 +277,7 @@ namespace F95ZoneMetadataProvider
 
         public override MetadataFile GetIcon(GetMetadataFieldArgs args)
         {
-            return F95ZoneMetadataProvider.settings.SetDefaultIcon ? new MetadataFile(IconUrl) : base.GetIcon(args);
+            return F95ZoneMetadataProvider.Settings.SetDefaultIcon ? new MetadataFile(IconUrl) : base.GetIcon(args);
         }
     }
 }
