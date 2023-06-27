@@ -41,22 +41,6 @@ namespace F95ZoneMetadataProvider
 
         private DateTime? ParseUnknownDate(string date)
         {
-            string[] formats =
-            {
-                "MM/dd/yy",
-                "MM/dd/yyyy",
-                "yyyy/MM/dd",
-                "yyyy/M/d",
-                "yy/MM/dd",
-                "M/d/yyyy",
-                "MM-dd-yy",
-                "MM-dd-yyyy",
-                "yyyy-MM-dd",
-                "yyyy-M-d",
-                "yy-MM-dd",
-                "M-d-yyyy",
-            };
-            
             if (!DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed))
             {
                 return null;
