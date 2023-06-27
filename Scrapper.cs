@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Playnite.SDK;
+using Playnite.SDK.Models;
 
 namespace F95ZoneMetadataProvider
 {
@@ -19,10 +23,13 @@ namespace F95ZoneMetadataProvider
         public const string DefaultBaseUrl = "https://f95zone.to/threads/";
         private readonly string _baseUrl;
 
-        private readonly ILogger/*<Scrapper>*/ _logger;
+        private readonly ILogger /*<Scrapper>*/
+            _logger;
+
         private readonly IConfiguration _configuration;
 
-        public Scrapper(ILogger/*<Scrapper>*/ logger, HttpMessageHandler messageHandler, string baseUrl = DefaultBaseUrl)
+        public Scrapper(ILogger /*<Scrapper>*/ logger, HttpMessageHandler messageHandler,
+            string baseUrl = DefaultBaseUrl)
         {
             _logger = logger;
             _baseUrl = baseUrl;
@@ -30,6 +37,32 @@ namespace F95ZoneMetadataProvider
             _configuration = Configuration.Default
                 .WithRequesters(messageHandler)
                 .WithDefaultLoader();
+        }
+
+        private DateTime? ParseUnknownDate(string date)
+        {
+            string[] formats =
+            {
+                "MM/dd/yy",
+                "MM/dd/yyyy",
+                "yyyy/MM/dd",
+                "yyyy/M/d",
+                "yy/MM/dd",
+                "M/d/yyyy",
+                "MM-dd-yy",
+                "MM-dd-yyyy",
+                "yyyy-MM-dd",
+                "yyyy-M-d",
+                "yy-MM-dd",
+                "M-d-yyyy",
+            };
+            
+            if (!DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed))
+            {
+                return null;
+            }
+
+            return parsed;
         }
 
         public async Task<ScrapperResult?> ScrapPage(string id, CancellationToken cancellationToken = default)
@@ -44,7 +77,8 @@ namespace F95ZoneMetadataProvider
                 return null;
             }
 
-            var description = document.QuerySelector("[name=description]")?.GetAttribute("content") ?? "No description";
+            var description = document.QuerySelector(".bbWrapper > div:nth-child(1)")?.TextContent?.Trim() ??
+                              "No description";
 
             var result = new ScrapperResult
             {
@@ -105,12 +139,15 @@ namespace F95ZoneMetadataProvider
             }
 
             // Rating
-            var selectRatingElement = (IHtmlSelectElement?)document.GetElementsByName("rating").FirstOrDefault(elem => elem.TagName.Equals(TagNames.Select, StringComparison.OrdinalIgnoreCase));
+            var selectRatingElement = (IHtmlSelectElement?)document.GetElementsByName("rating")
+                .FirstOrDefault(elem => elem.TagName.Equals(TagNames.Select, StringComparison.OrdinalIgnoreCase));
             if (selectRatingElement is not null)
             {
-                if (selectRatingElement.Dataset.Any(x => x.Key.Equals("initial-rating", StringComparison.OrdinalIgnoreCase)))
+                if (selectRatingElement.Dataset.Any(x =>
+                        x.Key.Equals("initial-rating", StringComparison.OrdinalIgnoreCase)))
                 {
-                    var kv = selectRatingElement.Dataset.FirstOrDefault(x => x.Key.Equals("initial-rating", StringComparison.OrdinalIgnoreCase));
+                    var kv = selectRatingElement.Dataset.FirstOrDefault(x =>
+                        x.Key.Equals("initial-rating", StringComparison.OrdinalIgnoreCase));
                     if (NumberExtensions.TryParse(kv.Value, out var rating))
                     {
                         result.Rating = rating;
@@ -122,7 +159,8 @@ namespace F95ZoneMetadataProvider
                 }
                 else
                 {
-                    _logger.Warn("Element with name \"rating\" does not have a data value with the name \"initial-rating\"");
+                    _logger.Warn(
+                        "Element with name \"rating\" does not have a data value with the name \"initial-rating\"");
                 }
             }
             else
@@ -171,7 +209,8 @@ namespace F95ZoneMetadataProvider
 
                     var anchorElement = (IHtmlAnchorElement?)(
                         elem.ParentElement!.TagName.Equals(TagNames.NoScript, StringComparison.OrdinalIgnoreCase)
-                            ? elem.ParentElement!.ParentElement!.TagName.Equals(TagNames.A, StringComparison.OrdinalIgnoreCase)
+                            ? elem.ParentElement!.ParentElement!.TagName.Equals(TagNames.A,
+                                StringComparison.OrdinalIgnoreCase)
                                 ? elem.ParentElement.ParentElement
                                 : null
                             : elem.ParentElement.TagName.Equals(TagNames.A, StringComparison.OrdinalIgnoreCase)
@@ -180,7 +219,9 @@ namespace F95ZoneMetadataProvider
 
                     if (anchorElement is not null)
                     {
-                        images.Add(anchorElement.Href.StartsWith(ImageLinkPrefix) ? anchorElement.Href : imageElement.Source);
+                        images.Add(anchorElement.Href.StartsWith(ImageLinkPrefix)
+                            ? anchorElement.Href
+                            : imageElement.Source);
                     }
                     else
                     {
@@ -213,14 +254,23 @@ namespace F95ZoneMetadataProvider
                 }
             }
 
+            // links :)
+            var links = document.QuerySelectorAll(".message-threadStarterPost div.bbWrapper > a")
+                .Select(elem => new Link(elem.TextContent, elem.GetAttribute("href")))
+                .ToList();
+
+            result.Links = links;
+
             return result;
         }
 
-        public async Task<List<ScrapperSearchResult>> ScrapSearchPage(string term, CancellationToken cancellationToken = default)
+        public async Task<List<ScrapperSearchResult>> ScrapSearchPage(string term,
+            CancellationToken cancellationToken = default)
         {
             var context = BrowsingContext.New(_configuration);
 
-            var url = $"https://f95zone.to/search/{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}/?q={term}&t=post&c[child_nodes]=1&c[nodes][0]=2&o=relevance&g=1";
+            var url =
+                $"https://f95zone.to/search/{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}/?q={term}&t=post&c[child_nodes]=1&c[nodes][0]=2&o=relevance&g=1";
             var document = await context.OpenAsync(url, cancellationToken);
 
             var blockRows = document.GetElementsByClassName("block-row")
@@ -235,7 +285,8 @@ namespace F95ZoneMetadataProvider
                 var headerElement = blockRow.GetElementsByClassName("contentRow-title").FirstOrDefault();
                 if (headerElement is null) continue;
 
-                var anchorElement = (IHtmlAnchorElement?)headerElement.Children.FirstOrDefault(x => x.TagName.Equals(TagNames.A, StringComparison.OrdinalIgnoreCase));
+                var anchorElement = (IHtmlAnchorElement?)headerElement.Children.FirstOrDefault(x =>
+                    x.TagName.Equals(TagNames.A, StringComparison.OrdinalIgnoreCase));
                 if (anchorElement is null || string.IsNullOrWhiteSpace(anchorElement.Href)) continue;
 
                 var link = anchorElement.Href;
@@ -271,7 +322,7 @@ namespace F95ZoneMetadataProvider
             if (title.Equals(string.Empty)) return default;
 
             // "Corrupted Kingdoms [v0.12.8] [ArcGames]"
-            
+
             var span = title.AsSpan().Trim();
 
             var bracketStartIndex = span.IndexOf('[');

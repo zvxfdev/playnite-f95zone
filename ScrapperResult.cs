@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Playnite.SDK.Models;
 
 namespace F95ZoneMetadataProvider
 {
@@ -17,6 +18,7 @@ namespace F95ZoneMetadataProvider
         public List<string>? Tags { get; set; }
         public double Rating { get; set; }
         public List<string>? Images { get; set; }
+        public List<Link>? Links { get; set; }
     }
 
     public class ScrapperSearchResult

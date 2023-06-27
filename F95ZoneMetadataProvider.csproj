@@ -84,6 +84,7 @@
     <Compile Include="SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UpdateChecker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
