@@ -9,12 +9,13 @@ This Playnite plugin is used to fetch game metadata from F95Zone.
 1. Download the latest release, it should be a .pext file
 2. Drag the downloaded .pext file into your Playnite window
 3. Click the "Yes" button
-4. Steps 5-9 are optional but searching won't really work without them
+4. Steps 5+ are required for searching
 5. Click on the Playnite logo in the top-left
 6. Click on "Add-ons"
 7. Click on Extension Settings > Metadata Sources > F95Zone
-8. Click on the Login button and log in to your F95Zone account
-9. Once complete, you can now click the Save button.
+8. Click on the Login button and log in to your F95Zone account 
+9. If you want to automatically check your games for updates, make sure to enable it!
+10. Once complete, you can now click the Save button.
 
 Now, whenever you add a game and click the "Download Metadata..." button, an F95Zone button should appear.
 
