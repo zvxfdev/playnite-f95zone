@@ -202,8 +202,23 @@ namespace F95ZoneMetadataProvider
 
         public override IEnumerable<Link> GetLinks(GetMetadataFieldArgs args)
         {
-            var id = GetResult(args)?.Id;
-            return id is null ? base.GetLinks(args) : new[] { new Link("F95zone", Scrapper.DefaultBaseUrl + id) };
+            var result = GetResult(args);
+            var id = result?.Id;
+            var fetchedLinks = result?.Links;
+            if (id == null)
+            {
+                return base.GetLinks(args);
+            }
+
+            Link defaultLink = new Link("F95zone", Scrapper.DefaultBaseUrl + id);
+
+            if (fetchedLinks == null)
+            {
+                return new[] { defaultLink };
+            }
+            
+            fetchedLinks.Add(defaultLink);
+            return fetchedLinks;
         }
 
         private IEnumerable<MetadataProperty>? GetProperties(GetMetadataFieldArgs args, PlayniteProperty currentProperty)

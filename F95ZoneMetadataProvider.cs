@@ -3,6 +3,7 @@ using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using Playnite.SDK.Events;
 
 namespace F95ZoneMetadataProvider
 {
@@ -23,7 +24,7 @@ namespace F95ZoneMetadataProvider
             MetadataField.Tags,
             MetadataField.BackgroundImage,
             MetadataField.CommunityScore,
-            MetadataField.CoverImage 
+            MetadataField.CoverImage
         };
 
         public override List<MetadataField> SupportedFields { get; } = Fields;
@@ -47,6 +48,17 @@ namespace F95ZoneMetadataProvider
         public override OnDemandMetadataProvider GetMetadataProvider(MetadataRequestOptions options)
         {
             return new F95ZoneMetadataProviderProvider(options, this);
+        }
+
+        public override void OnApplicationStarted(OnApplicationStartedEventArgs args)
+        {
+            var scrapper = F95ZoneMetadataProviderProvider.SetupScrapper(F95ZoneMetadataProvider.Settings);
+            if (F95ZoneMetadataProvider.Settings.CheckForUpdates)
+            {
+                UpdateChecker checker = new UpdateChecker(this.PlayniteApi, scrapper);
+                checker.CheckAllGamesForUpdates();
+            }
+            base.OnApplicationStarted(args);
         }
 
         public override ISettings GetSettings(bool firstRunSettings)
