@@ -212,12 +212,12 @@ namespace F95ZoneMetadataProvider
 
             Link defaultLink = new Link("F95zone", Scrapper.DefaultBaseUrl + id);
 
-            if (fetchedLinks == null)
+            if (fetchedLinks == null || !F95ZoneMetadataProvider.Settings.ShouldScrapeLinks)
             {
                 return new[] { defaultLink };
             }
             
-            fetchedLinks.Add(defaultLink);
+            fetchedLinks.Insert(0, defaultLink);
             return fetchedLinks;
         }
 

@@ -237,7 +237,7 @@ namespace F95ZoneMetadataProvider
                     }
                 }
             }
-
+            
             // links :)
             var links = document.QuerySelectorAll(".message-threadStarterPost div.bbWrapper > a")
                 .Select(elem => new Link(elem.TextContent, elem.GetAttribute("href")))

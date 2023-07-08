@@ -38,11 +38,7 @@ namespace F95ZoneMetadataProvider
         public PlayniteProperty TagProperty { get; set; } = PlayniteProperty.Tags;
 
         public bool CheckForUpdates { get; set; }
-
-        public int DaysBetweenUpdate { get; set; } = 7;
-
-        [DontSerialize]
-        public TimeSpan UpdateDistance => TimeSpan.FromDays(DaysBetweenUpdate);
+        public bool ShouldScrapeLinks { get; set; } = true;
 
         public bool UpdateFinishedGames { get; set; }
 
@@ -97,7 +93,7 @@ namespace F95ZoneMetadataProvider
                 LabelProperty = savedSettings.LabelProperty;
                 TagProperty = savedSettings.TagProperty;
                 CheckForUpdates = savedSettings.CheckForUpdates;
-                DaysBetweenUpdate = savedSettings.DaysBetweenUpdate;
+                ShouldScrapeLinks = savedSettings.ShouldScrapeLinks;
                 UpdateFinishedGames = savedSettings.UpdateFinishedGames;
                 SetDefaultIcon = savedSettings.SetDefaultIcon;
             }
@@ -161,7 +157,7 @@ namespace F95ZoneMetadataProvider
                 LabelProperty = LabelProperty,
                 TagProperty = TagProperty,
                 CheckForUpdates = CheckForUpdates,
-                DaysBetweenUpdate = DaysBetweenUpdate,
+                ShouldScrapeLinks = ShouldScrapeLinks,
                 UpdateFinishedGames = UpdateFinishedGames,
                 SetDefaultIcon = SetDefaultIcon
             };
@@ -183,7 +179,7 @@ namespace F95ZoneMetadataProvider
             LabelProperty = _previousSettings.LabelProperty;
             TagProperty = _previousSettings.TagProperty;
             CheckForUpdates = _previousSettings.CheckForUpdates;
-            DaysBetweenUpdate = _previousSettings.DaysBetweenUpdate;
+            ShouldScrapeLinks = _previousSettings.ShouldScrapeLinks;
             UpdateFinishedGames = _previousSettings.UpdateFinishedGames;
             SetDefaultIcon = _previousSettings.SetDefaultIcon;
         }
@@ -210,11 +206,6 @@ namespace F95ZoneMetadataProvider
             if (!Enum.IsDefined(typeof(PlayniteProperty), TagProperty))
             {
                 errors.Add($"Unknown value \"{TagProperty}\"");
-            }
-
-            if (DaysBetweenUpdate < 0)
-            {
-                errors.Add("Update Interval must not be negative!");
             }
 
             return !errors.Any();

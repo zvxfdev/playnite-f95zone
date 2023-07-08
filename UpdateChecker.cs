@@ -23,7 +23,7 @@ namespace F95ZoneMetadataProvider
             {
                 foreach (var game in _api.Database.Games)
                 {
-                    Link? link = game.Links.FirstOrDefault(link => link.Url.StartsWith("https://f95zone.to/threads/"));
+                    Link? link = game.Links?.FirstOrDefault(link => link.Url.StartsWith("https://f95zone.to/threads/"));
                     if (link == null) continue;
                     await CheckGameForUpdates(game, link);
                 }
@@ -31,7 +31,7 @@ namespace F95ZoneMetadataProvider
             catch (Exception ex)
             {
                 _api.Notifications.Add(Guid.NewGuid().ToString(),
-                    "[F95Zone] Failed to check for updates (check your internet connection), error: " + ex.Message, NotificationType.Info);
+                    "[F95Zone] Failed to check for updates (check your internet connection), error: " + ex.Message + ex.StackTrace, NotificationType.Info);
             }
         }
 
@@ -46,8 +46,8 @@ namespace F95ZoneMetadataProvider
             // Mismatched version, send notification!
             if (latestVersion != game.Version)
             {
-                _api.Notifications.Add(Guid.NewGuid().ToString(),
-                    "Game update available: " + game.Name + ", link: " + link.Url, NotificationType.Info);
+                _api.Notifications.Add(Guid.NewGuid().ToString(), $"Game update available: {game.Name}, link: {link.Url}, (Old Version: {game.Version}, New Version: {latestVersion})",
+                    /*"Game update available: " + game.Name + ", link: " + link.Url + " (Old Version: " + game.Version + ", New Version: " + latestVersion + ")",*/ NotificationType.Info);
             }
         }
     }

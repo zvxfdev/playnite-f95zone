@@ -42,9 +42,9 @@
         <TextBlock Text="Check for Updates on Startup:"/>
         <CheckBox IsChecked="{Binding Mode=TwoWay, Path=CheckForUpdates}"/>
 
-        <TextBlock Text="Update Interval in Days:"/>
-        <TextBox TextChanged="TextBoxBase_OnTextChanged" Text="{Binding Mode=TwoWay, Path=DaysBetweenUpdate, Converter={StaticResource IntToStringConverter}}"/>
-
+        <TextBlock Text="Scrape misc. game links"/>
+        <CheckBox IsChecked="{Binding Mode=TwoWay, Path=ShouldScrapeLinks}"/>
+        
         <TextBlock Text="Look for Updates of finished Games:"/>
         <CheckBox IsChecked="{Binding Mode=TwoWay, Path=UpdateFinishedGames}"/>
 

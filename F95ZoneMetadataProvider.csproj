@@ -81,9 +81,6 @@
     <Compile Include="Scrapper.cs" />
     <Compile Include="ScrapperResult.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UpdateChecker.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -110,10 +107,6 @@
     <Page Include="F95ZoneMetadataProviderSettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="SettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
