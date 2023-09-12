@@ -19,6 +19,10 @@ This Playnite plugin is used to fetch game metadata from F95Zone.
 
 Now, whenever you add a game and click the "Download Metadata..." button, an F95Zone button should appear.
 
+## Troubleshooting
+### Why don't I get results when searching for games?
+Answer: Try logging in again (steps 7-8)
+
 ## Contribution
 You can contribute in a number of ways. If you want to report a problem or suggest a feature, make an issue.
 If you'd like to make a change, feel free to open a pull request.
